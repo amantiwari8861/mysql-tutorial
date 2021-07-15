@@ -194,7 +194,28 @@ describe teacher;
 
 insert into teacher values(101,201,"aman","java");
 
+-- 15-07-2021 work
+use mydatabase;
 
+create table categories(categoryid int,categoryname varchar(30),
+description varchar(50)
+,primary key(categoryid));
 
+create table products(categoryid int,productid int,
+productname varchar(30),description varchar(40),
+foreign key(categoryid) references categories(categoryid));
 
+insert into categories values(101,"accesories","all gadgets");
 
+insert into products values(101,201,"realme xt","best phone");
+
+insert into products values(104,202,"realme c2","best phone"); -- error
+insert into products values(null,202,"realme c2","best phone"); 
+
+insert into products values(101,202,"realme c1","worst phone"); 
+
+select * from products;
+delete from products where productid=202;
+delete from categories where categoryid=101; -- referential integrity
+
+select * from categories;
