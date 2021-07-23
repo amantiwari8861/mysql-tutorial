@@ -259,6 +259,7 @@ update categories set categoryid=105 where categoryid=101; -- error due to restr
 delete from categories where categoryid=101;-- error due to restrict
 
 -- ------------------------------------------------------------------------
+use mydatabase;
 drop table products;
 drop table categories;
 create table categories(categoryid int,categoryname varchar(30),
@@ -268,13 +269,12 @@ description varchar(50)
 create table products(categoryid int,productid int,
 productname varchar(30),description varchar(40),
 foreign key(categoryid) references categories(categoryid)
-on update cascade on delete cascade
-);
+on update cascade on delete cascade);
 insert into categories values(102,"accesories","all gadgets");
 insert into products values(102,201,"realme xt","best phone");
 select * from categories;
 select * from products;
-update categories set categoryid=105 where categoryid=101;
+update categories set categoryid=105 where categoryid=102;
 delete from categories where categoryid=105;
 -- -----------------------------------------------------------------------------------
 
@@ -295,9 +295,8 @@ insert into products values(102,201,"realme xt","best phone");
 select * from categories;
 select * from products;
 update categories set categoryid=105 where categoryid=102;
-delete from categories where categoryid=102;
+delete from categories where categoryid=105;
 -- ---------------------------------------------------------
-
 drop table products;
 drop table categories;
 create table categories(categoryid int,categoryname varchar(30),
@@ -316,5 +315,32 @@ select * from categories;
 select * from products;
 update categories set categoryid=105 where categoryid=102;
 delete from categories where categoryid=105;
+
+-- 23-07-2021
+
+create table categories(categoryid int,categoryname varchar(30),
+description varchar(50)
+,primary key(categoryid) 
+);
+create table products(categoryid int,productid int,
+productname varchar(30),description varchar(40),
+-- constraint myrule foreign key(categoryid) references categories(categoryid)
+foreign key(categoryid) references categories(categoryid));
+
+insert into categories values(102,"accesories","all gadgets");
+insert into products values(102,201,"realme xt","best phone");
+
+show create table products;
+
+-- alter table products drop foreign key myrule;
+alter table products drop foreign key products_ibfk_1;
+
+update categories set categoryid=105 where categoryid=102;
+delete from categories where categoryid=105;
+
+SET FOREIGN_KEY_CHECKS=0;  -- disable foreign key constraint
+SET FOREIGN_KEY_CHECKS=1;  -- enable foreign key constraint
+
+
 
 
