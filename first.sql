@@ -247,7 +247,7 @@ drop table products;
 
 insert into categories values(101,"accesories","all gadgets");
 insert into products values(101,201,"realme xt","best phone");
-insert into products values(104,202,"realme c2","best phone"); -- error
+-- insert into products values(104,202,"realme c2","best phone"); -- error
 insert into products values(null,202,"realme c2","best phone"); 
 insert into products values(101,202,"realme c1","worst phone"); 
 
@@ -342,5 +342,41 @@ SET FOREIGN_KEY_CHECKS=0;  -- disable foreign key constraint
 SET FOREIGN_KEY_CHECKS=1;  -- enable foreign key constraint
 
 
+-- 26/07/2021
 
+use mydatabase;
+show tables;
+drop database mydatabase;
+select * from products;
+select * from products where productname='realme xt';
+select productid,productname from products where categoryid=101;
+select * from products where categoryid=101 and productid=201;
+select * from products where categoryid=101 or productid=201;
+select distinct productid from products;
+select * from products where productname like 're%';
+insert into products values(101,204,"Rext","best phone");
+select * from products where productname like '%t';
+select * from products where productname like '%e%';
+select * from products where productname not like '% %';
+select * from products where not productname  ='realme xt';
+select * from products where productname in ('realme xt','realme c1');
+select * from products where productid between 200 and 202;
+select * from products limit 2 ;
+select * from products limit 5,1 ;
+select count(*) from products;
+select * from products limit 2,3 ;
+select * from products where categoryid is null;
+
+-- 27/07/2021
+
+use mydatabase;
+
+select * from products;
+insert into products values(101,210,"blackberry","best phone1");
+
+select * from products order by productname asc;
+select * from products order by productname desc;
+
+drop table products;
+drop table categories;
 
