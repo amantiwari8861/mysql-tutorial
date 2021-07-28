@@ -30,3 +30,25 @@ insert into products values
     select * from products;
     select * from categories,products;
     
+    -- 28/7/2021
+    
+use mydatabase;
+insert into products values (206,null,'shirt1','hello');
+insert into products values (207,null,'jeans','hello');
+
+select * from categories
+inner join products
+on categories.categoryid=products.categoryid;
+-- or 
+select * from categories as c
+inner join products as p
+on c.categoryid=p.categoryid;
+-- or 
+select * from categories c
+inner join products p
+on c.categoryid=p.categoryid;
+-- or 
+select * from categories
+inner join products
+using(categoryid);
+
