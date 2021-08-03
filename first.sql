@@ -376,7 +376,8 @@ insert into products values(101,210,"blackberry","best phone1");
 
 select * from products order by productname asc;
 select * from products order by productname desc;
-
 drop table products;
 drop table categories;
+
+
 

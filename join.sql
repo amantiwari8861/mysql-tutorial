@@ -52,3 +52,52 @@ select * from categories
 inner join products
 using(categoryid);
 
+-- 29/07/2021
+use mydatabase;
+
+insert into categories values(500,"bags","waterproof");
+
+select * from categories p1
+left join products c1
+on p1.categoryid=c1.categoryid;
+
+-- left:categories
+-- right:products
+
+-- or 
+select * from categories p1
+left join products c1
+using(categoryid);
+
+-- 03/8/2021
+
+use mydatabase;
+
+-- right join
+select * from categories c
+right join products p
+on c.categoryid=p.categoryid; 
+
+-- only right
+select * from categories c
+right join products p
+on c.categoryid=p.categoryid
+where c.categoryid is null;
+
+-- only left 
+
+select * from categories c
+left join products p
+on c.categoryid=p.categoryid
+where p.categoryid is null;
+
+-- full outer join 
+
+-- unique columns only ( no common data will be duplicated)
+select * from categories c
+left join products p
+on c.categoryid=p.categoryid
+union
+select * from categories c
+right join products p
+on c.categoryid=p.categoryid;
