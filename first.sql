@@ -379,5 +379,6 @@ select * from products order by productname desc;
 drop table products;
 drop table categories;
 
+use mydatabase;
 
-
+select * from categories join products;

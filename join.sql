@@ -101,3 +101,36 @@ union
 select * from categories c
 right join products p
 on c.categoryid=p.categoryid;
+
+
+-- ----------------------------
+-- 04/08/2021 joining multiple tables 
+use mydatabase;
+
+create table user_info(userid int primary key auto_increment,
+username varchar(20),password varchar(20),productid varchar(20),
+foreign key(productid) references products(product_id));
+
+insert into user_info(username,password,productid) values('aman','123','201'),('rohan','456','203'),('rohit','789','204');
+
+select * from categories c
+inner join products p on c.categoryid=p.categoryid
+inner join user_info u on u.product_id=p.product_id;
+
+-- or
+alter table user_info rename column productid to product_id;
+
+select * from categories c
+inner join products p using(categoryid)
+inner join user_info u using(product_id);
+-- --------------------------------
+
+select * from categories c
+left join products p
+on c.categoryid=p.categoryid
+where p.categoryid is null
+union
+select * from categories c
+right join products p
+on c.categoryid=p.categoryid
+where c.categoryid is null;
