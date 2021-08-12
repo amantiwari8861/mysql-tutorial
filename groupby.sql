@@ -14,14 +14,9 @@ select min(marks) from students;
 select max(marks) from students;
 select avg(marks) from students;
 select sum(marks)/avg(marks) as 'count' ,count(*) from students;
-
 set @num1=50,@num2=30;
-
 select @num1+@num2 as 'sum';
-
 prepare stmt1 from 
 'select ? + ? as sum ;';
-
 execute stmt1 using @num1,@num2;
-
 deallocate prepare stmt1;
