@@ -16,7 +16,7 @@ where category_name='phones' );
 -- derived tables
 
 select category_name from 
-( select * from categories ) as der -- derived table
+( select categoryid,category_name from categories ) as der -- derived table
 where categoryid=101;
 
 -- exists
@@ -34,3 +34,13 @@ select * from categories;
  where not exists(select * 
  from  categories 
  where products.categoryid=categories.categoryid); 
+
+
+-- in
+use mydatabase;
+select * from products
+where product_name in ('realme xt','redmi');
+
+
+
+

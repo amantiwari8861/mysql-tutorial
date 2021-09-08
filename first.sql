@@ -378,7 +378,17 @@ select * from products order by productname asc;
 select * from products order by productname desc;
 drop table products;
 drop table categories;
-
 use mydatabase;
-
 select * from categories join products;
+
+
+select * from products;
+select * from products 
+where product_name = 'realme xt';
+-- null -> not assigned not defined value
+insert into products values('hii',null,'hello','xyz');
+
+use jdbc;
+select * from userinfo;
+
+describe products;
