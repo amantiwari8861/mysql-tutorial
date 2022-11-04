@@ -28,8 +28,12 @@ insert into clock(col1) values('2000/5/12');
 
 insert into clock(col2) values('21:06');
 
+insert into clock(col1) values(now());
 insert into clock(col2) values(now());
 insert into clock(col3) values(now());
+insert into clock(col4) values(now());
+insert into clock(col5) values(now());
+insert into clock values(now(),now(),now(),now(),now());
 select * from clock;
 
 
@@ -67,6 +71,128 @@ desc multiinsert;
 drop table multiinsert;
 
 
+-- ------------------------------------------------------
+create table employee(empid varchar(30),empname varchar(50)
+,empdetails varchar(50));
+select * from sakila.customer;
+insert into employee select customer_id,first_name,address_id 
+from sakila.customer;
+select * from employee;
+-- operators
+select * from employee where empdetails <> 30;
+-- != or <> not equal to
+select * from employee where empname like '%r%';
+-- and or not
+select * from employee where empname like 'j%' and empid=26;
+select * from employee where empname like 'j%' or empid>27;
+select * from employee where empname not like 'j%';
+
+-- FILTERING DATA -------------------------------------------------------
+select * from employee where empid between 25 and 55;
+select * from employee where empname in('susan','mary','linda','abc');
+update employee set empname =null where empid<4;
+select * from employee where empname is null;
+insert into employee values(4,'barbara',8);
+select distinct *   from employee; -- only unique row
+select * from employee limit 20;
+select * from employee limit 20 offset 15;
+-- order by
+select * from employee order by empname asc;
+select * from employee order by empname desc;
+
+-- -constraints------------------------------------------
+-- not null
+-- unique
+-- primary key
+-- foreign key
+-- check 
+-- default 
+use mydatabase;
+create table students(
+rollno int unique not null,
+name varchar(50) not null,
+age int check (age>=18),
+school varchar(80) default 'MEGA'
+);
+describe students;
+insert into students(age,name)  values(12,'abc');
+select * from students;
+drop table students;
+-- alter table students modify  rollno int unique ;
+create table students(
+rollno int primary key,
+name varchar(50) not null,
+age int check (age>=18),
+school varchar(80) default 'MEGA',
+mobile varchar(30) not null unique
+);
+insert into students(name,mobile) values('a','988');
+
+
+-- ----foreign key-------------------------------------
+use mydatabase;
+create table categories(categoryid int,
+categoryname varchar(30),
+description varchar(50)
+,primary key(categoryid));
+create table products(cid int,productid int,
+productname varchar(30),descriptions varchar(40),
+foreign key(cid) references categories(categoryid));
+drop table categories; -- error
+drop table products;
+insert into categories values(101,"laptop","any description"),
+(102,"phone","any description"),
+(103,"others","any description");
+insert into products values(108,201,"realme xt","anything"); -- error
+insert into products values(102,202,"realme xt","anything"); 
+delete from categories where categoryid=102; -- error
+
+-- -------------------------------------------------------
+-- on update cascade on delete cascade
+
+create table categories(categoryid int,
+categoryname varchar(30),
+description varchar(50),
+constraint abc primary key(categoryid));
+create table products(cid int,productid int,
+productname varchar(30),descriptions varchar(40),
+constraint myrule foreign key(cid) references categories(categoryid)
+on delete cascade on update cascade
+);
+insert into categories values
+(101,"laptop","any description"),
+(102,"phone","any description"),
+(103,"others","any description");
+
+insert into products values(101,201,"hp","anything"); 
+insert into products values(102,202,"realme xt","anything"); 
+insert into products values(102,203,"redmi","anything"); 
+select * from categories;
+select * from products;
+update categories set categoryid=500 where categoryid=101;
+delete from categories where categoryid=102;
+
+drop table products;
+drop table categories;
+-- -------------------------------------------------------
+create table student( sname varchar(30),father varchar(30),description varchar(40),
+primary key(sname,father));
+
+drop table student;
+
+insert into products values(null,204,"redmi","anything"); 
+
+alter table products drop constraint myrule ;
 
 
 
+insert into products values(900,203,"redmi","anything"); 
+
+alter table products add constraint myrule2 foreign key(cid)
+ references categories(categoryid);
+ 
+ desc products;
+
+show create table products;
+
+alter table products drop constraint myrule2;

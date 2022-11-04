@@ -1,0 +1,72 @@
+create table personal1(
+student_id   Number(10)
+constraint st_id_pk primary key,
+name  varchar2(20) not null,
+email varchar2(20) )
+
+describe personal1
+
+
+
+create table STUDENT (Name VARCHAR(50),Fathers_name varchar(50),Mail_id varchar(50),Stream varchar(50),Qualification varchar(50),Entry_Time varchar(50),Exit_Time varchar(50),Address varchar(50),Age number(3))
+
+select * from Aman.STUDENT
+
+DROP TABLE STUDENT 
+
+
+
+create table PUBLISHERS
+(
+    pid varchar(50),
+    pname varchar(50),
+pphone varchar(50),
+padd varchar(50),
+pcity varchar(50),
+pstate varchar(50),
+pzip varchar(50))
+
+describe PUBLISHERS
+
+
+
+create table MyEmployee (
+EmployeeID Number(10),
+Name  VARCHAR2(20),
+Age Number(3))
+
+create table STUDENT(Name VARCHAR2(20),Fathers_name VARCHAR2(20),Mail_id VARCHAR2(20) ,Stream VARCHAR2(10) ,Qualification VARCHAR2(20),Entry_Time varchar2(6),Exit_Time varchar2(6),Address VARCHAR2(20),Age varchar2(10))
+
+describe MyEmployee
+
+drop table STUDENT
+
+
+insert into MyEmployee(EmployeeID,Name,Age)
+values('100','Aman','18')
+
+create table academic1
+(
+student_id   Number(10)
+constraint st_id_fk foreign key(student_id)
+references personal1(student_id),
+highest_degree   varchar2(30),
+passing_year  number(5),
+
+experience number(4)
+)
+
+describe academic
+
+
+CREATE USER NIIT IDENTIFIED BY 2818
+GRANT CREATE SESSION TO NIIT
+GRANT ALL PRIVILEGES TO NIIT
+GRANT UNLIMITED TABLESPACE TO NIIT
+
+
+alter table niit.personal1 add(constraint email_un unique(email))
+
+
+alter table niit.personal1 add(constraint email_n not null(email))
+
