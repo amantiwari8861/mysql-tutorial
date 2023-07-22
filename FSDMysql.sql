@@ -1,3 +1,6 @@
+
+-- Day 1 22/7/2023
+
 show databases;
 create database MysqlFSD;
 use mysqlfsd;
