@@ -1,10 +1,10 @@
 
 # comment - Internal Documentation
-# Commnets can start with # or --
+# Commnets can start with # or -- and space
 # comments dont get executed.
 
 # create database
-create database apr28;
+create database apr28; -- this is comment
 
 # drop database
 drop database apr28;
