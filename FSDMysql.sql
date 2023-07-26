@@ -1,6 +1,5 @@
 
 -- Day 1 22/7/2023
-
 show databases;
 create database MysqlFSD;
 use mysqlfsd;
@@ -24,7 +23,6 @@ insert into employee values
 (180,"BAman ","noida 65",500.5645,687877);
 
 truncate employee;
-
 drop table employee;
 
 select name from employee;
@@ -36,13 +34,13 @@ insert into employee values
 
 select distinct name from employee;
 
-insert into employee(name) values("xyz");
+insert into employee(name) values("Ankit Pandey");
 select * from employee;
 insert into employee(name,id) values("abcd",108);
 
 delete from employee where id=108;
 
-update employee set name="Aditya" where name="abcd";
+update employee set name="Aditya" where name="Ankit Pandey";
 
 -- Hello this is single line comment
 /* Multiple
@@ -51,6 +49,8 @@ update employee set name="Aditya" where name="abcd";
 */
 # hello
 
+-- 23/7/2023
+use mysqlfsd;
 drop table employee;
 
 create table Employee(id int,name char(20),
@@ -66,13 +66,12 @@ insert into employee values(101,"Aman","Imarticus 62",
 select * from employee;
 
 
-insert into employee values(101,"Aman","Imarticus 62",
+insert into employee values(101,"Ankit","Imarticus 62",
 60000.56,9891062743,"1999/04/22",curdate(),66687.32873487,
 "he is a best teacher",current_timestamp(),true);
 
 -- 24/07/2023
 
-create database MysqlFSD; 
 use mysqlfsd;
 
 create table Students(id int,name varchar(255),
@@ -188,3 +187,34 @@ insert into students(name,age,phone,email,address,fees,city) values("Aman Tiwari
 "Noida");
 
  -- h.w BatchMates
+ 
+ -- 26/7/2023
+ 
+ -- primary key 
+/* What is Database Normalization?
+
+Normalization is a database design technique that reduces data redundancy and eliminates 
+undesirable characteristics like Insertion, Update and Deletion Anomalies.
+ Normalization rules divides larger tables into smaller tables and links them
+ using relationships. The purpose of Normalisation in SQL is to eliminate 
+ redundant (repetitive) data and ensure data is stored logically.*/
+ 
+ 
+ create table Students(name varchar(255),
+ fathername varchar(255),address varchar(255),
+ primary key(name,fathername) );
+ 
+ insert into students values("Krishna","Xyz","noida");
+ insert into students values("Krishna","Abcd","noida");
+ insert into students values("Ravi","Xyz","noida");
+ insert into students values("Ankit","Abcd","noida");
+ 
+ insert into students values("Krishna","Xyz","noida 62bhvfbh");
+ insert into students values("Ravi","Xyz","noida");
+
+ 
+ 
+ 
+ 
+ 
+ 

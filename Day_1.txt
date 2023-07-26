@@ -1,0 +1,23 @@
+   SQL (structured query language)
+
+Q1.how we stores our data in real life for example in a school.
+Ans. data stores in registers and registors have tables.
+
+Q2. what are the drawbacks of paper system.
+Ans. Time Consuming task
+
+Q3.if u go to market then is there only one type of biscuit in market ?
+Ans. No
+
+same here in DBMS (database management system)
+registor -> database
+pages -> tables
+teacher -> dbms( a type of software)
+eg. of dbms mysql,sql server,Oracle db,postgres sql,mongodb,amazon rds etc
+
+
+
+
+
+
+
