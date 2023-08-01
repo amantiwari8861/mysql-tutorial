@@ -213,8 +213,246 @@ undesirable characteristics like Insertion, Update and Deletion Anomalies.
  insert into students values("Ravi","Xyz","noida");
 
  
+ use mysqlfsd;
+
+create table categories(category_id int primary key,category_name varchar(255),category_desc varchar(255)); 
+
+create table products(
+cat_id  int,product_id int primary key,
+product_name varchar(255),product_desc varchar(255),
+brand varchar(255),
+foreign key(cat_id) references categories(category_id));
+
+select * from categories;
+select * from products;
+
+insert into categories values(201,'electronic devices','best electronic items');
+
+insert into products values(201,501,'dell vestro','small lappy','dell');
+
+select * from categories;
+select * from products;
+
+insert into products values(586,502,'dell inspron','good lap','dell');
+
+
+
+delete from categories where category_id = 201;
+update categories set category_id=202 where category_id=201;
+
+
+drop table categories; -- error parent table can't be deleted first
+drop table products;
+drop table categories;
+
+-- 3 tables 
+create table sellers(vendor_id int primary key,vendor_name varchar(255),address varchar(255));
+create table categories(category_id int primary key,category_name varchar(255),category_desc varchar(255)); 
+create table products(
+cat_id  int,product_id int primary key,
+product_name varchar(255),product_desc varchar(255),
+brand varchar(255),
+seller_id int,
+foreign key(cat_id) references categories(category_id),
+foreign key(seller_id) references sellers(vendor_id)
+);
+
+insert into categories values(201,'electronic devices','best electronic items');
+insert into sellers values(301,'flipkart','online');
+insert into sellers values(302,'amazon','online');
+insert into products values(201,501,'dell vestro','small lappy','dell',301);
+
+select * from categories;
+select * from products;
+select * from sellers;
+
+-- h.w create a table students and teaches then apply foreign key in students
+-- students taught by teacher
+
+
+-- 28/7/2023
+use mysqlfsd;
+show tables;
+
+drop table products;
+drop table categories;
+drop table sellers;
+
+
+create table sellers(vendor_id int ,vendor_name varchar(255),address varchar(255),primary key(vendor_id));
+
+create table categories(category_id int,category_name varchar(255),category_desc varchar(255),primary key(category_id)); 
+
+create table products(
+cat_id  int,product_id int,
+product_name varchar(255),product_desc varchar(255),
+brand varchar(255),
+seller_id int,
+primary key(product_id),
+constraint myrule foreign key(cat_id) references categories(category_id) on update cascade on delete cascade,
+constraint myrule2 foreign key(seller_id) references sellers(vendor_id)
+);
+desc products;
+
+insert into products(cat_id,product_id) values(104,345);
+
+
+(no updation and deletion is permitted if child having rows linked with foreign key in parent)
+
+on update restrict on delete restrict -- by default 
+on update cascade on delete cascade
+on update set null on delete set null
+
+
+insert into categories values(201,'electronic devices','best electronic items');
+insert into sellers values(301,'flipkart','online');
+insert into sellers values(302,'amazon','online');
+insert into products values(201,502,'dell vestro','small lappy','dell',301);
+
+
+select * from categories;
+update categories set category_id=903;
+delete from categories where category_id=903;
+select * from products;
+
+
+drop table products;
+
+create table products(
+cat_id  int,product_id int,
+product_name varchar(255),product_desc varchar(255),
+brand varchar(255),
+seller_id int,
+primary key(product_id),
+constraint myrule foreign key(cat_id) references categories(category_id) on update set null on delete set null,
+constraint myrule2 foreign key(seller_id) references sellers(vendor_id)
+);
+
+insert into products values(201,501,'dell vestro','small lappy','dell',301);
+
+insert into categories values(201,'electronic devices','best electronic items');
+
+
+update categories set category_id=701 where category_id=201;
+
+select * from products;
+delete from categories where category_id=201;
+
+
+drop table products;
+
+
+create table products(
+cat_id  int,product_id int,
+product_name varchar(255),product_desc varchar(255),
+brand varchar(255),
+seller_id int,
+primary key(product_id),
+constraint myrule foreign key(cat_id) references categories(category_id) 
+on update cascade on delete set null,
+constraint myrule2 foreign key(seller_id) references sellers(vendor_id)
+);
+
+select * from categories;
+select * from products;
+
+insert into categories values(201,'electronic devices','best electronic items');
+update categories set category_id=701 where category_id=201;
+delete from categories where category_id=701;
+insert into products values(201,501,'dell vestro','small lappy','dell',301);
+
+create database mysqlfsd;
+use mysqlfsd;
+create table students(roll_no int,name varchar(255),mobile varchar(255),fees double);
+
+insert into students values
+(101,"Aman",9891062743,500.56),
+(102,"RAman",9891062743,1500.56),
+(103,"BAman",545456,500.56),
+(104,"Aman Tiwari",9891062743,58900.56),
+(105,"Ankit",6565654,50000.56),
+(106,"Ravi",9891062743,50.56),
+(107,"Naman",68878,50099.56);
+
+
+select * from students;
+
+select * from students where name="Ravi";
+select * from students where fees<5000;
+select * from students where fees>5000;
+select * from students where name like '%n';
+select * from students where name like '%i';
+select * from students where name like 'R%';
+select * from students where name like '_Am_n';
+select * from students where name like '%r%';
+select * from students where name like '%a%' and fees<5000;
+select * from students where name like 'Aman' or fees>5000;
+select * from students where  not fees>5000;
+select * from students where  name <> 'aman';
+select * from students where  name <> 'aman' order by name;
+insert into students(name,fees) values('ravi',4000);
+insert into students(name,fees) values('ravi',400);
+insert into students(name,fees) values('ravi',40000);
+select * from students order by name,fees;
+select * from students order by name,fees desc;
+
+
+ -- 1/8/2023
+ drop database mysqlfsd;
+ 
+ create database mysqlfsd;
+ 
+ use classicmodels;
+ show tables;
+ 
+ select customerName,city,country,creditlimit from customers where country="usa";
+ 
+ select customerName,city,country,creditlimit from customers 
+ where creditlimit>90000 and country="singapore" ;
+
+
+ select customerName,city,country,creditlimit from customers 
+ where customername like "%co." and country="germany" and creditlimit>30000;
+ 
+ 
+ select customerName,city,country,creditlimit from customers 
+ where customername like "%ltd%";
+ 
+ select customerName,city,country,creditlimit from customers 
+ where customername like "Dr%Ltd.";
+ 
+  select customerName,city,country,creditlimit from customers 
+where country="australia";
+ 
+ 
+  select customerName,city,country,creditlimit from customers 
+where country="australia" limit 3;
+
+  select customerName,city,country,creditlimit from customers 
+where country="australia" limit 3 offset 2;
+ 
+ 
+  select customerName,city,country,creditlimit from customers 
+where country="australia" order by creditlimit asc limit 3 offset 2;
+ 
+ 
+  select customerName,city,country,creditlimit from customers 
+where country="australia" order by creditlimit desc limit 3;
+ 
+ 
+  select customerName,city,country,creditlimit from customers 
+where country="australia" or creditlimit>100000 order by country,creditLimit;
+ 
+ 
+  select customerName,city,country,creditlimit from customers 
+where country="australia" and creditlimit>90000 order by creditlimit,country;
+ 
+ 
+  select customerName,city,country,creditlimit from customers 
+where not country="australia" and creditlimit>90000 order by creditlimit,country;
  
  
  
- 
+  select customerName,city,country,creditlimit from customers 
+where country in ("australia","USA")  order by creditlimit,country;
  
