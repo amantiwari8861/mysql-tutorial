@@ -451,8 +451,66 @@ where country="australia" and creditlimit>90000 order by creditlimit,country;
   select customerName,city,country,creditlimit from customers 
 where not country="australia" and creditlimit>90000 order by creditlimit,country;
  
- 
- 
   select customerName,city,country,creditlimit from customers 
 where country in ("australia","USA")  order by creditlimit,country;
  
+select * from customers where country <> 'usa'; -- not equal to 
+
+ -- insert into select 
+ -- alter 
+ -- 02/08/2023
+ 
+ use classicmodels;
+ 
+ use mysqlfsd;
+ show tables;
+ create table Customers(custId int,name varchar(255),companyname varchar(100));
+ 
+ select * from classicmodels.customers;
+ select customernumber,contactfirstname,customername from classicmodels.customers;
+ 
+ insert into customers(custId,name) select customernumber,contactfirstname
+ from classicmodels.customers;
+ 
+ truncate customers; 
+ insert into customers select customernumber,contactfirstname,customername
+ from classicmodels.customers;
+ 
+ select * from customers;
+ 
+ -- alter 
+ 
+ alter table customers add column address varchar(200);
+ alter table customers add column address varchar(200) after custId;
+ alter table customers drop column address;
+ alter table customers drop column name;
+
+alter table customers modify column custId varchar(20);
+ desc customers;
+ 
+ alter table customers modify column address int;
+ alter table customers modify column custId int not null unique;
+ alter table customers modify column custId int primary key auto_increment;
+ 
+alter table customers drop primary key;
+alter table customers modify column custid int;
+
+ desc customers;
+
+-- constraint myrule primary key(abcd)
+ commit;
+ 
+ SHOW INDEX FROM customers;
+ alter table customers drop index `PRIMARY`;
+ 
+ SHOW CREATE TABLE products;
+ alter table products drop foreign key `products_ibfk_2`;
+ desc products;
+ 
+ insert into products(product_id,seller_id) values(55566,56);
+ insert into products(product_id,seller_id) values(45,454544256);
+ select * from products;
+ 
+ alter table customers rename to employees;
+ desc employees;
+ alter table employees rename column custid to customerId;
