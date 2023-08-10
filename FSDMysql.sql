@@ -514,3 +514,259 @@ alter table customers modify column custid int;
  alter table customers rename to employees;
  desc employees;
  alter table employees rename column custid to customerId;
+ 
+ -- 07/08/2023
+
+use classicmodels;
+
+select * from customers;
+
+
+-- select * from customers where country='singapore';
+select country,count(*)
+ as 'total customers',sum(creditLimit) 'Total',avg(creditLimit),
+min(creditLimit),max(creditLimit) from customers group by country order by country;
+
+select country,city,count(*)
+ as 'total customers',
+sum(creditLimit) 'Total',avg(creditLimit),
+min(creditLimit),max(creditLimit)
+from customers group by country,city 
+order by country,city;
+
+
+select country,city,count(*)
+ as 'total customers',
+sum(creditLimit) 'Total',avg(creditLimit),
+min(creditLimit),max(creditLimit)
+from customers group by country,city 
+where sum(creditlimit)>50000
+order by country,city;
+
+
+select country,city,count(*)
+ as 'total customers',
+sum(creditLimit) 'Total',avg(creditLimit),
+min(creditLimit),max(creditLimit)
+from customers group by country,city 
+having sum(creditLimit)>65000
+order by country,city;
+ 
+ 
+ -- 9/8/2023
+-- sub query : query within query
+use classicmodels;
+select * from employees;
+
+select firstname 
+from employees
+where jobtitle='vp sales';
+
+select * from employees where firstname="Mary";
+
+-- or
+
+select * 
+from employees 
+where firstname=(
+	select firstname 
+	from employees
+	where jobtitle='vp sales');
+ 
+ -- subquery use with different table
+ 
+ select * 
+from employees; 
+
+ select * 
+from offices; 
+
+select * from offices 
+where officeCode=(
+	select officeCode 
+	from employees 
+	where firstName="George"
+);
+-- operators
+
+-- select * from offices 
+-- where officeCode=(
+-- 	select officeCode
+-- 	from employees 
+-- 	where jobTitle="Sales Rep"
+-- );
+
+select * from offices 
+where officeCode =any(
+	select officeCode
+	from employees 
+	where jobTitle="Sales Rep"
+);
+ 
+ 
+select * from offices 
+where officeCode =any(
+	select officeCode
+	from employees 
+	where jobTitle="Sales Rep" and reportsTo=1143
+);
+
+/*
+> ALL means greater than every value. In other words, it means greater than 
+the maximum value. For example, > ALL (1, 2, 3) means greater than 3.
+> ANY means greater than at least one value, that is, greater than the minimum.
+So > ANY (1, 2, 3) means greater than 1.
+*/
+
+
+select * from offices 
+where officeCode >All(
+	select officeCode
+	from employees 
+	where jobTitle="Sales Rep" and reportsTo=1143
+);
+
+select * from offices 
+where officeCode <All(
+	select officeCode
+	from employees 
+	where jobTitle="Sales Rep" and reportsTo=1621
+);
+
+select * from offices 
+where officeCode =All(
+	select officeCode
+	from employees 
+	where jobTitle="Sales Rep" and reportsTo=1143
+);
+
+-- 10/8/2023 joins
+use classicmodels;
+create table categories(category_id int,
+category_name varchar(255)
+,category_desc varchar(255),
+primary key(category_id)); 
+
+create table product_details(
+cat_id  int,product_id int,
+product_name varchar(255),
+brand varchar(255),
+product_desc varchar(255),
+primary key(product_id),
+constraint myrule foreign key(cat_id) references categories(category_id)
+);
+
+insert into categories values
+(101,"phones","best phones"),
+(102,"laptop","best laptop"),
+(103,"fashion","best fashion"),
+(104,"food","best food"),
+(105,"guns","best guns");
+
+insert into product_details values
+(101,201,"Realme XT","Realme","best phone of realme"),
+(101,202,"Redmi note 9","Redmi","best phone of redmi"),
+(102,203,"HP Pavallion","HP","best laptop of HP"),
+(102,204,"Dell inspiron","Dell","best laptop of dell"),
+(103,205,"Denim jeans","denim","best jeans of denim"),
+(null,206,"others","xyz","pata nahi"),
+(null,207,"coffee","nescafe","best coffee");
+
+select * from categories;
+select * from product_details;
+
+-- cross join (comma join)
+
+select * 
+from categories,product_details
+order by categories.category_id,
+product_details.product_id;
+
+
+select * 
+from product_details,categories
+order by categories.category_id,
+product_details.product_id;
+
+-- inner join
+
+select * from 
+categories
+inner join product_details
+on categories.category_id=product_details.cat_id;
+
+
+select * from 
+categories as c
+inner join product_details as p
+on c.category_id=p.cat_id;
+
+-- left join
+
+select * from 
+categories as c
+left join product_details as p
+on c.category_id=p.cat_id;
+
+-- only left
+
+select * from 
+categories as c
+left join product_details as p
+on c.category_id=p.cat_id
+where p.cat_id is null;
+
+
+-- right join
+
+select * from 
+categories as c
+right join product_details as p
+on c.category_id=p.cat_id;
+
+-- only right
+
+select * from 
+categories as c
+right join product_details as p
+on c.category_id=p.cat_id
+where c.category_id is null;
+
+
+-- full outer join
+
+select * from 
+categories as c
+left join product_details as p
+on c.category_id=p.cat_id
+union all
+select * from 
+categories as c
+right join product_details as p
+on c.category_id=p.cat_id;
+
+-- full outer join without common twice
+select * from 
+categories as c
+left join product_details as p
+on c.category_id=p.cat_id
+union 
+select * from 
+categories as c
+right join product_details as p
+on c.category_id=p.cat_id;
+
+-- full outer join without common part
+
+select * from 
+categories as c
+right join product_details as p
+on c.category_id=p.cat_id
+where c.category_id is null
+union
+select * from 
+categories as c
+left join product_details as p
+on c.category_id=p.cat_id
+where p.cat_id is null;
+
