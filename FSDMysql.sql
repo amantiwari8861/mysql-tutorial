@@ -770,3 +770,39 @@ left join product_details as p
 on c.category_id=p.cat_id
 where p.cat_id is null;
 
+-- 17/8/2023
+-- using clause 
+use classicmodels;
+select * from categories; -- in this category_id is primary key
+select * from product_details; -- in this cat_id is foreign key
+-- if u want to use using clause the u have to set the column defination same(datatype and name).
+alter table product_details rename column cat_id to category_id;
+
+
+select * from 
+categories
+inner join product_details
+on categories.category_id=product_details.category_id;
+
+-- here the category_id column is duplicate in result set
+
+select * from 
+categories
+inner join product_details
+using (category_id);
+
+-- DQL(Data Query Language) eg.select
+-- DML(data manipulation language) eg. insert,update,delete
+-- DDL(data defination language) eg. create,alter,drop etc
+   -- Test
+-- DCL(data control language) eg. grant,revoke
+-- TCL(Transaction control language) eg.commit,savepoint,rollback
+-- trigger,stored procedures,prepared statements,views
+
+
+
+
+
+
+
+
