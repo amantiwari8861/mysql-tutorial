@@ -796,13 +796,77 @@ using (category_id);
 -- DDL(data defination language) eg. create,alter,drop etc
    -- Test
 -- DCL(data control language) eg. grant,revoke
+
 -- TCL(Transaction control language) eg.commit,savepoint,rollback
 -- trigger,stored procedures,prepared statements,views
 
+use classicmodels;
+create user 'krishna'@'localhost' identified by '123456';
+
+grant select,insert,update,delete 
+on classicmodels.products 
+to 'krishna'@'localhost';
+
+select * from mysql.user;
+
+-- 22/8/2023
+
+drop user 'krishna'@'localhost';
+
+create user 'backenddev'@'localhost' identified by '2818';
+
+grant select on *.* to 'backenddev'@'localhost';
+
+grant all on *.* to 'backenddev'@'localhost';
+revoke all PRIVILEGES,GRANT OPTION from 'backenddev'@'localhost';
+
+grant grant option on *.* to 'backenddev'@'localhost';
 
 
+-- backenddev.sql --- 
+create database abcd;
+show databases;
+use amazon;
+show tables;
+select * from product;
+
+use amandb;
+drop database amandb;
+
+create user 'krishna'@'localhost' identified by '12345';
+grant Select on *.* to 'krishna'@'localhost'; 
 
 
+-- krishna.sql ----------
 
+show databases;
+use example;
+show tables;
+
+drop database example;
+
+-- 22/08/2023
+/*
+TCL - Transaction Control Language:
+Think of a transaction like making a pizza. You need to prepare the dough, add toppings, bake it, and serve it. Now, imagine you're doing this with a friend. If something goes wrong (like you run out of cheese), you want to make sure everything gets fixed, or you both agree to scrap the pizza-making attempt. In databases, transactions work similarly.
+
+    COMMIT: Imagine you're making the pizza with your friend, and everything goes smoothly. You both high-five each other and decide to serve the pizza. This is like saving all the changes you made in the database.
+
+    ROLLBACK: Now, imagine the cheese falls on the floor while you're making the pizza. You and your friend quickly decide to start over. In databases, if something goes wrong during a transaction, you can undo all the changes you made, just like starting over with the pizza.
+
+ACID - Atomicity, Consistency, Isolation, Durability:
+Think of ACID like the guarantees you get when you buy something online:
+
+    Atomicity: Imagine buying a set of building blocks online. Either you get the whole set delivered, or you get nothing. You don't want to receive just a few blocks. Similarly, in databases, a transaction is like getting the complete set of changes or none at all.
+
+    Consistency: Let's say you order a blue toy car online, but you receive a red one. That's a mistake, and you'd expect the company to fix it. In databases, consistency means that the changes you make are accurate and follow the rules, just like getting the right product.
+
+    Isolation: Imagine you're sharing a toy with your friend, and you each have your own copy to play with. What your friend does with their toy shouldn't affect what you're doing with yours. Similarly, in databases, even if multiple people are making changes at the same time, their changes won't mess up each other's work.
+
+    Durability: When you put your toys in a toy box, you expect them to stay there, even if you leave the room. In databases, once you've made changes and they're saved, they're like toys in the box – even if the power goes out, your changes won't disappear.
+
+So, TCL helps you manage the steps of making changes (transactions) in a database, and ACID ensures that these changes are reliable, correct, and safe, just like ordering products online and expecting them to be right, separate from others, and not disappear after you've ordered them.
+
+*/
 
 
