@@ -796,8 +796,8 @@ using (category_id);
 -- DDL(data defination language) eg. create,alter,drop etc
    -- Test
 -- DCL(data control language) eg. grant,revoke
-
 -- TCL(Transaction control language) eg.commit,savepoint,rollback
+
 -- trigger,stored procedures,prepared statements,views
 
 use classicmodels;
@@ -869,4 +869,79 @@ So, TCL helps you manage the steps of making changes (transactions) in a databas
 
 */
 
+-- 25/8/2023
+use mysqlfsd;
+create table Employees(id int primary key auto_increment,
+name varchar(255),amount double);
 
+insert into Employees(name,amount) values("Aman",10000),
+("Ravi",5000),
+("Krishna",1000),
+("Aditya",500);
+select * from employees;
+desc employees;
+
+set autocommit=0;
+begin;
+insert into employees values(8,"lalit",9000);
+rollback;
+
+begin;
+delete from employees where id=8;
+commit;
+
+begin;
+insert into employees values(8,"lalit",9000);
+savepoint save1;
+insert into employees values(9,"lalit 2",9000);
+rollback to save1;
+
+-- triggers
+
+use classicmodels;
+show tables;
+
+select * from product_details;
+select * from categories;
+
+insert into categories values
+(101,"phones","best phones"),
+(102,"laptop","best laptop"),
+(103,"fashion","best fashion"),
+(104,"food","best food"),
+(105,"guns","best guns");
+
+insert into product_details values
+(101,201,"Realme XT","Realme","best phone of realme"),
+(101,202,"Redmi note 9","Redmi","best phone of redmi"),
+(102,203,"HP Pavallion","HP","best laptop of HP"),
+(102,204,"Dell inspiron","Dell","best laptop of dell"),
+(103,205,"Denim jeans","denim","best jeans of denim"),
+(null,206,"others","xyz","pata nahi"),
+(null,207,"coffee","nescafe","best coffee");
+
+
+create table soft_delete (cat_id int,product_id int,pname varchar(255)
+,brand varchar(255),description varchar(255),delete_timestamp timestamp);
+
+/*In MySQL, a delimiter is a special character used to signal the end of a SQL statement.
+ The most commonly used delimiter in MySQL is the semicolon (;),
+ which is used to separate statements from one another.*/
+ 
+delimiter $$
+create trigger delete_product
+after delete on product_details
+for each row
+begin
+	INSERT INTO SOFT_delete values(old.category_id,old.product_id,
+    old.product_name,old.brand,old.product_desc,current_timestamp());
+end $$
+
+delimiter ;
+
+delete from product_details where product_id=202;
+
+drop trigger delete_product;
+select * from product_details;
+
+select * from soft_delete;
