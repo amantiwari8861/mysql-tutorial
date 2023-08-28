@@ -797,7 +797,6 @@ using (category_id);
    -- Test
 -- DCL(data control language) eg. grant,revoke
 -- TCL(Transaction control language) eg.commit,savepoint,rollback
-
 -- trigger,stored procedures,prepared statements,views
 
 use classicmodels;
@@ -945,3 +944,299 @@ drop trigger delete_product;
 select * from product_details;
 
 select * from soft_delete;
+
+-- 28/8/2023
+ -- stored procedures 
+
+use amazon;
+desc product;
+select * from product;
+
+-- Create Users table
+CREATE TABLE Users (
+    ID SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    shipping_address TEXT,
+    payment_information TEXT
+);
+
+-- Create Role table
+CREATE TABLE Role (
+    ID SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) NOT NULL,
+    description TEXT
+);
+
+-- Create UserRoles mapping table
+CREATE TABLE UserRoles (
+    user_id INT REFERENCES Users(ID),
+    role_id INT REFERENCES Role(ID),
+    PRIMARY KEY (user_id, role_id)
+);
+
+-- Create Sellers table
+CREATE TABLE Sellers (
+    ID SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    contact_information TEXT,
+    description TEXT
+);
+
+-- Create Products table
+CREATE TABLE Products (
+    ID SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    quantity_in_stock INT NOT NULL,
+    image_url TEXT
+);
+
+-- Create SellerProduct mapping table
+CREATE TABLE SellerProduct (
+    seller_id INT REFERENCES Sellers(ID),
+    product_id INT REFERENCES Products(ID),
+    commission_percentage DECIMAL(5, 2),
+    start_date DATE,
+    end_date DATE,
+    PRIMARY KEY (seller_id, product_id)
+);
+
+-- Create Categories table
+CREATE TABLE Categories (
+    ID SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+-- Create ProductCategory mapping table
+CREATE TABLE ProductCategory (
+    product_id INT REFERENCES Products(ID),
+    category_id INT REFERENCES Categories(ID),
+    PRIMARY KEY (product_id, category_id)
+);
+
+-- Create Reviews table
+CREATE TABLE Reviews (
+    ID SERIAL PRIMARY KEY,
+    rating INT NOT NULL,
+    comment TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT REFERENCES Users(ID),
+    product_id INT REFERENCES Products(ID)
+);
+
+-- Create Orders table
+CREATE TABLE Orders (
+    ID SERIAL PRIMARY KEY,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    user_id INT REFERENCES Users(ID)
+);
+
+-- Create OrderItems table
+CREATE TABLE OrderItems (
+    ID SERIAL PRIMARY KEY,
+    quantity INT NOT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL,
+    order_id INT REFERENCES Orders(ID),
+    product_id INT REFERENCES Products(ID)
+);
+
+-- Create Carts table
+CREATE TABLE Carts (
+    ID SERIAL PRIMARY KEY,
+    user_id INT REFERENCES Users(ID)
+);
+
+-- Create CartItems table
+CREATE TABLE CartItems (
+    ID SERIAL PRIMARY KEY,
+    quantity INT NOT NULL,
+    cart_id INT REFERENCES Carts(ID),
+    product_id INT REFERENCES Products(ID)
+);
+
+-- Create UserProductFavorite mapping table
+CREATE TABLE UserProductFavorite (
+    user_id INT REFERENCES Users(ID),
+    product_id INT REFERENCES Products(ID),
+    date_favorited TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, product_id)
+);
+
+
+show tables;
+desc cartitems;
+
+-- Insert sample data into Users table
+INSERT INTO Users (username, password, email, shipping_address, payment_information)
+VALUES
+    ('user1', 'password1', 'user1@example.com', '123 Main St', 'Credit Card'),
+    ('user2', 'password2', 'user2@example.com', '456 Elm St', 'PayPal');
+    -- Add more entries here...
+
+-- Insert sample data into Role table
+INSERT INTO Role (role_name, description)
+VALUES
+    ('user', 'Regular user role'),
+    ('admin', 'Administrator role');
+    -- Add more entries here...
+
+-- Insert sample data into UserRoles table
+INSERT INTO UserRoles (user_id, role_id)
+VALUES
+    (1, 1), -- user1 has user role
+    (2, 1), -- user2 has user role
+    (2, 2); -- user2 also has admin role
+    -- Add more entries here...
+
+-- Insert sample data into Sellers table
+INSERT INTO Sellers (name, email, contact_information, description)
+VALUES
+    ('Seller A', 'sellerA@example.com', '123-456-7890', 'Electronics and Gadgets'),
+    ('Seller B', 'sellerB@example.com', '987-654-3210', 'Fashion and Accessories');
+    -- Add more entries here...
+
+-- Insert sample data into Products table
+INSERT INTO Products (name, description, price, quantity_in_stock, image_url)
+VALUES
+    ('Product 1', 'Description of Product 1', 49.99, 100, 'product1.jpg'),
+    ('Product 2', 'Description of Product 2', 19.99, 50, 'product2.jpg');
+    -- Add more entries here...
+
+-- Insert sample data into SellerProduct table
+INSERT INTO SellerProduct (seller_id, product_id, commission_percentage, start_date, end_date)
+VALUES
+    (1, 1, 10.00, '2023-01-01', '2023-12-31'),
+    (2, 2, 15.00, '2023-01-01', '2023-12-31');
+    -- Add more entries here...
+
+-- Insert sample data into Categories table
+INSERT INTO Categories (name)
+VALUES
+    ('Electronics'),
+    ('Fashion');
+    -- Add more entries here...
+
+-- Insert sample data into ProductCategory table
+INSERT INTO ProductCategory (product_id, category_id)
+VALUES
+    (1, 1), -- Product 1 belongs to Electronics category
+    (2, 2); -- Product 2 belongs to Fashion category
+    -- Add more entries here...
+
+-- Insert sample data into Reviews table
+INSERT INTO Reviews (rating, comment, user_id, product_id)
+VALUES
+    (5, 'Great product!', 1, 1),
+    (4, 'Nice design.', 2, 2);
+    -- Add more entries here...
+
+-- Insert sample data into Orders table
+INSERT INTO Orders (order_date, status, total_amount, user_id)
+VALUES
+    ('2023-08-01', 'shipped', 99.98, 1),
+    ('2023-08-02', 'delivered', 39.98, 2);
+    -- Add more entries here...
+
+-- Insert sample data into OrderItems table
+INSERT INTO OrderItems (quantity, subtotal, order_id, product_id)
+VALUES
+    (2, 99.98, 1, 1),
+    (1, 19.99, 2, 2);
+    -- Add more entries here...
+
+-- Insert sample data into Carts table
+INSERT INTO Carts (user_id)
+VALUES
+    (1),
+    (2);
+    -- Add more entries here...
+
+-- Insert sample data into CartItems table
+INSERT INTO CartItems (quantity, cart_id, product_id)
+VALUES
+    (3, 1, 1),
+    (2, 2, 2);
+    -- Add more entries here...
+
+-- Insert sample data into UserProductFavorite table
+INSERT INTO UserProductFavorite (user_id, product_id, date_favorited)
+VALUES
+    (1, 1, '2023-08-01 10:00:00'),
+    (2, 2, '2023-08-02 14:30:00');
+    -- Add more entries here...
+
+
+-- stored procedures
+
+delimiter //
+create procedure selectAllProduct()
+begin
+select * from Users;
+end //
+delimiter ;
+
+call selectAllProduct();
+
+drop procedure selectAllProduct;
+
+delimiter //
+create procedure selectAllProduct()
+begin
+select * from Users;
+end //
+delimiter ;
+
+call selectAllProduct();
+drop procedure selectAllProduct;
+
+call selectAllUsers();
+
+
+-- IN example
+
+delimiter //
+create procedure selectUserById(IN uid int)
+begin
+select * from Users where id=uid;
+end //
+delimiter ;
+
+call selectUserById(1);
+
+-- out example 
+
+delimiter //
+create procedure getUserEmailById(in uid int,out uemail varchar(50))
+begin
+select email into uemail from Users where id=uid;
+end //
+delimiter ;
+
+call getUserEmailById(1,@EMAIL);
+
+SELECT concat('THE EMAIL IS :' , @EMAIL) as 'result';
+
+-- inout
+
+delimiter //
+create procedure updateProductPrice(in pid int,inout price2 double)
+begin
+	update products set price=price2+price2*15/100 where id=pid;
+	select price into price2 from products where id=pid; -- new price
+end //
+delimiter ;
+
+set @temp=0.0;
+select price into @temp from products where id=1; -- old price
+call updateProductPrice(1,@temp);
+
+select @temp as 'updated price';
+
+select * from products;
+
