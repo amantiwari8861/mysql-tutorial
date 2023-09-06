@@ -1240,3 +1240,75 @@ select @temp as 'updated price';
 
 select * from products;
 
+-- 30/8/2023
+
+use amazon;
+prepare selectUser from
+'select * from users';
+
+execute selectUser;
+deallocate prepare selectUser;
+
+prepare getUserById from
+'select * from users where id=?';
+
+set @id1=1;
+execute getUserById using @id1;
+set @id1=2;
+execute getUserById using @id1;
+
+-- views
+CREATE OR REPLACE VIEW customerOrders AS
+SELECT 
+    orderNumber,
+    customerName,
+    SUM(quantityOrdered * priceEach) total
+FROM
+    orderDetails
+INNER JOIN orders o USING (orderNumber)
+INNER JOIN customers USING (customerNumber)
+GROUP BY orderNumber;
+
+select * from customerOrders; 
+
+show tables;
+show full tables;
+
+drop view customerOrders;
+
+CREATE VIEW customerOrderStats (
+   customersName , 
+   orderCount
+) 
+AS
+    SELECT 
+        customerName, 
+        COUNT(orderNumber)
+    FROM
+        customers
+            INNER JOIN
+        orders USING (customerNumber)
+    GROUP BY customerName;
+
+select * from customerOrderStats;
+
+insert into customerOrderStats values("aman",50);
+desc customers;
+use classicmodels;
+
+CREATE VIEW officeInfo
+ AS 
+   SELECT officeCode, phone, city
+   FROM offices;
+
+SELECT  * FROM officeInfo;
+
+UPDATE officeInfo 
+SET 
+    phone = '+33 14 723 5555'
+WHERE
+    officeCode = 4;
+    
+desc offices;
+
+insert into officeInfo values(110096,'9891062743','delhi');
