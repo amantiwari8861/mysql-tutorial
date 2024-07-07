@@ -1,0 +1,34 @@
+Course : mysql
+
+what is Database ?
+A database is an organized collection of structured information, or data, typically stored electronically in a computer system. 
+A database is usually controlled by a database management system (DBMS).
+
+DBMS -> Database Management System (software)
+eg.SQL Server,Oracle Database,MySQL,MongoDB,PostgreSQL
+	microsoft -> SQL Server
+	oracle ->Oracle Database,MySQL
+	MongoDB inc -> MongoDB
+	open source(developers community) -> PostgreSQL,SQLlite
+	Amazon -> DynamoDB
+	etc.
+
+SQL -> structured query language (biscuit)
+SQL helps us to communicate with these databases !
+
+User -> SQL(query) -> DBMS -> Database or other things
+
+there are two types of database ?
+relational db and noSql Db
+nosql DB example : mongoDB,postgreSQL
+
+SQL can be categorized into 
+	->DQL(data query language) eg. Select
+	->DML (data manipulation language) eg. insert,update,delete 
+	->DDL (data defination language) eg. create,alter,drop,truncate etc.
+	->DCL (data control language) eg. grant,revoke
+	->TCL (transaction control language) eg.commit,rollback,savepoint
+
+
+
+

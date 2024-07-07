@@ -1,0 +1,43 @@
+
+
+
+
+-- Create a new table named sales_data
+create table sales_data (
+    product varchar(5),
+    sale_date date,
+    total_sales int,
+    primary key(product, sale_date, total_sales)
+);
+
+-- Insert data into the sales_data table
+insert into sales_data values
+('X', '2022-03-01', 200),
+('Y', '2022-03-01', 150),
+('X', '2022-04-01', 300),
+('Y', '2022-04-01', 250),
+('X', '2022-05-01', 180),
+('Y', '2022-05-01', 200),
+('X', '2022-06-01', 400),
+('Y', '2022-06-01', 350);
+
+-- Display the data in the sales_data table
+select * from sales_data;
+
+-- Use lag() and lead() to get previous and next sales values within each product partition
+select product, sale_date, total_sales,
+    lag(total_sales, 1, 0) over (partition by product order by sale_date) as prev_sales,
+    lead(total_sales, 1, 0) over (partition by product order by sale_date) as next_sales
+from sales_data;
+
+-- Calculate the difference between current sales and previous sales
+select product, sale_date, total_sales,
+    lag(total_sales, 1, 0) over (partition by product order by sale_date) as prev_sales,
+    total_sales - lag(total_sales, 1, 0) over (partition by product order by sale_date) as diff
+from sales_data;
+
+-- Calculate the percent difference between current sales and previous sales
+select product, sale_date, total_sales,
+    lag(total_sales, 1, 0) over (partition by product order by sale_date) as prev_sales,
+    (total_sales - lag(total_sales, 1, 0) over (partition by product order by sale_date)) / lag(total_sales, 1, 0) over (partition by product order by sale_date) as percent_diff
+from sales_data;
