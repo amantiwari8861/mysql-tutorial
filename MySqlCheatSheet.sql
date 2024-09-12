@@ -645,7 +645,79 @@ execute showCustomerdata using @custid;
 
 deallocate prepare showCustomerdata;
 
+/*In MySQL, a delimiter is a special character used to signal the end of a SQL statement.
+ The most commonly used delimiter in MySQL is the semicolon (;),
+ which is used to separate statements from one another.*/
 -- stored procedure in mysql
+
+delimiter //
+create procedure selectAllProduct()
+begin
+select * from Users;
+end //
+delimiter ;
+
+call selectAllProduct();
+
+drop procedure selectAllProduct;
+
+delimiter //
+create procedure selectAllProduct()
+begin
+select * from Users;
+end //
+delimiter ;
+
+call selectAllProduct();
+drop procedure selectAllProduct;
+
+call selectAllUsers();
+
+
+-- IN example
+
+delimiter //
+create procedure selectUserById(IN uid int)
+begin
+select * from Users where id=uid;
+end //
+delimiter ;
+
+call selectUserById(1);
+
+-- out example 
+
+delimiter //
+create procedure getUserEmailById(in uid int,out uemail varchar(50))
+begin
+select email into uemail from Users where id=uid;
+end //
+delimiter ;
+
+call getUserEmailById(1,@EMAIL);
+
+SELECT concat('THE EMAIL IS :' , @EMAIL) as 'result';
+
+-- inout
+
+delimiter //
+create procedure updateProductPrice(in pid int,inout price2 double)
+begin
+	update products set price=price2+price2*15/100 where id=pid;
+	select price into price2 from products where id=pid; -- new price
+end //
+delimiter ;
+
+set @temp=0.0;
+select price into @temp from products where id=1; -- old price
+call updateProductPrice(1,@temp);
+
+select @temp as 'updated price';
+
+select * from products;
+
+
+-- -------------------------------------
 
 CREATE PROCEDURE dorepeat(p1 INT)
 BEGIN
@@ -1291,3 +1363,265 @@ DROP FOREIGN KEY fk_department;
 
 ALTER TABLE employees
 DROP CONSTRAINT check_salary;
+
+
+-- write csv
+SHOW VARIABLES LIKE 'secure_file_priv';
+use classicmodels;
+SELECT * 
+INTO OUTFILE 'C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\students.csv'
+CHARACTER SET utf8mb4
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+FROM customers;
+
+-- read csv 
+LOAD DATA INFILE 'C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\students.csv'
+INTO TABLE students
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(id, name, dob, mobileNo);
+
+-- 
+DELIMITER $$
+
+CREATE FUNCTION CustomerLevel(
+	credit DECIMAL(10,2)
+) 
+RETURNS VARCHAR(20)
+DETERMINISTIC
+BEGIN
+    DECLARE customerLevel VARCHAR(20);
+
+    IF credit > 50000 THEN
+		SET customerLevel = 'PLATINUM';
+    ELSEIF (credit >= 50000 AND 
+			credit <= 10000) THEN
+        SET customerLevel = 'GOLD';
+    ELSEIF credit < 10000 THEN
+        SET customerLevel = 'SILVER';
+    END IF;
+	-- return the customer level
+	RETURN (customerLevel);
+END$$
+DELIMITER ;
+
+-- doubts (window functions)
+use mera_database;
+create table DataTable  as 
+select customerNumber,contactFirstName,city,state,country,creditlimit
+ from classicmodels.customers;
+ 
+select * from DataTable order by creditLimit;
+drop table DataTable;
+
+-- max credit limit in all
+select max(creditlimit) from DataTable;
+
+select dt.*,max(creditlimit) from DataTable dt;
+
+-- get max creditLimit from each country ( 122 rows -> 28 rows)
+select country,max(creditlimit) 
+from DataTable dt
+group by country;
+
+select dt.*,country,max(creditlimit) 
+from DataTable dt
+group by country;
+
+-- window functions 
+/*Window functions in MySQL are a powerful feature that allows you to perform 
+calculations across a set of table rows that are related to the current row.
+ They are similar to aggregate functions, but unlike aggregate functions,
+ window functions do not cause rows to become grouped into a single output row.
+ Instead, rows retain their separate identities.*/
+ 
+select dt.*,country,max(creditlimit) over()
+from DataTable dt;
+
+ 
+select dt.*,country,max(creditlimit) over(partition by country order by country)
+from DataTable dt ;
+
+select dt.*,country,row_number() over(partition by country order by country)
+from DataTable dt ;
+
+
+
+select dt.*,country,rank() over(order by creditlimit)
+from DataTable dt ;
+
+-- ranking from bottom
+select dt.*,dense_rank() over(order by creditlimit)
+from DataTable dt ;
+
+-- ranking from top
+select dt.*,rank() over(order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+select dt.*,dense_rank() over(order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+-- rank according to country 
+select dt.*,dense_rank() over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+-- rank according to leading creditlimit in country 
+
+select dt.*,lag(creditlimit,1) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+-- shows who is leading from whom 
+select dt.*,lead(creditlimit,1) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+
+select dt.*,ntile(4) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+select dt.*,first_value(creditlimit) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+select dt.*,last_value(creditlimit) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+select dt.*,nth_value(creditlimit,2) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+
+
+-- doubts (window functions)
+use mera_database;
+create table DataTable  as 
+select customerNumber,contactFirstName,city,state,country,creditlimit
+ from classicmodels.customers;
+ 
+select * from DataTable order by creditLimit;
+drop table DataTable;
+
+-- max credit limit in all
+select max(creditlimit) from DataTable;
+
+select dt.*,max(creditlimit) from DataTable dt;
+
+-- get max creditLimit from each country ( 122 rows -> 28 rows)
+select country,max(creditlimit) 
+from DataTable dt
+group by country;
+
+select dt.*,country,max(creditlimit) 
+from DataTable dt
+group by country;
+
+-- window functions 
+/*Window functions in MySQL are a powerful feature that allows you to perform 
+calculations across a set of table rows that are related to the current row.
+ They are similar to aggregate functions, but unlike aggregate functions,
+ window functions do not cause rows to become grouped into a single output row.
+ Instead, rows retain their separate identities.*/
+ 
+select dt.*,country,max(creditlimit) over()
+from DataTable dt;
+
+ 
+select dt.*,country,max(creditlimit) over(partition by country order by country)
+from DataTable dt ;
+
+select dt.*,country,row_number() over(partition by country order by country)
+from DataTable dt ;
+
+
+
+select dt.*,country,rank() over(order by creditlimit)
+from DataTable dt ;
+
+-- ranking from bottom
+select dt.*,dense_rank() over(order by creditlimit)
+from DataTable dt ;
+
+-- ranking from top
+select dt.*,rank() over(order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+select dt.*,dense_rank() over(order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+-- rank according to country 
+select dt.*,dense_rank() over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+-- rank according to leading creditlimit in country 
+
+select dt.*,lag(creditlimit,1) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+-- shows who is leading from whom 
+select dt.*,lead(creditlimit,1) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+
+select dt.*,ntile(4) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+select dt.*,first_value(creditlimit) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+select dt.*,last_value(creditlimit) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+select dt.*,nth_value(creditlimit,2) over(partition by country
+ order by creditlimit desc) as top_customers
+from DataTable dt ;
+
+
+
+The choice between RANK() and DENSE_RANK() in SQL depends on how you want to handle ties in your ranking and the specific requirements of your use case. Here are some scenarios where each function might be more appropriate:
+
+### Use Cases for RANK()
+
+1. *Handling Gaps in Ranking:*
+   - *Scenario*: You have a dataset where you want to highlight gaps in ranking when there are ties. For example, in a competition, if two participants tie for 1st place, the next participant should be ranked 3rd (not 2nd) to indicate that two people share the first place.
+   - *Example*: In a sports tournament ranking, where it's important to show that there are shared positions.
+   
+2. *Highlighting Relative Positions:*
+   - *Scenario*: In a situation where understanding the distribution or spread of values is important, using RANK() helps illustrate that there is a break in continuity when ties occur.
+   - *Example*: Analyzing sales performance where knowing how many people have the same sales figure and the gaps between them matters for understanding competitiveness.
+
+3. *Use in Leaderboards with Skipped Positions:*
+   - *Scenario*: When creating a leaderboard that mimics traditional ranking systems which skip ranks for ties.
+   - *Example*: Ranking academic scores where two students might have the same score and are tied for 2nd place, so the next student is 4th (skipping 3rd).
+
+### Use Cases for DENSE_RANK()
+
+1. *Continuous Ranking Without Gaps:*
+   - *Scenario*: You want to generate rankings that do not skip any rank numbers, even if there are ties. This is useful when every position in the rank is valuable, and you don't want to indicate any gaps.
+   - *Example*: Awarding prizes where multiple participants with the same score get the same rank, but the next distinct score gets the immediate next rank without skipping.
+   
+2. *Creating Compact Lists:*
+   - *Scenario*: When generating compact lists or summaries where the rank is more about order than position, and a consecutive numbering system is preferred.
+   - *Example*: Listing products by customer ratings in an e-commerce site where products with the same rating are given the same rank, but the list itself is not meant to show gaps.
+
+3. *Use in Continuous Data Analysis:*
+   - *Scenario*: Analyzing data in a way that emphasizes the actual number of distinct groups or levels, not the gaps between them.
+   - *Example*: Classifying customers into tiers based on purchase amounts, where each tier represents a contiguous range of customers regardless of ties.
+
+### Summary
+
+- **Use RANK()** when you need to show the rank with gaps for tied values, such as in competitions, leaderboards with traditional scoring, or any scenario where it is important to highlight the ranking gaps.
+- **Use DENSE_RANK()** when you need a continuous ranking sequence without gaps, which is often required in compact reports, prize distributions, or when ranking in scenarios where the order of values without skipped ranks is more meaningful.
+
+The decision between RANK() and DENSE_RANK() should be based on how you want to interpret and present the rankings and what insights you want to extract from your data.
+
+
